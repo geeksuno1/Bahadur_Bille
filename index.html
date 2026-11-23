@@ -62,6 +62,72 @@
 .map-pick{display:flex;align-items:center;gap:8px}.map-pick span{font-size:9px;letter-spacing:2px;color:#7fb2ff;margin-right:4px}
 .map-btn{flex:1;padding:11px 8px;font:10px 'Press Start 2P','Courier New',monospace;letter-spacing:1px;color:#bcd0ff;background:#141a44;border:3px solid #0b0b1e;box-shadow:3px 3px 0 #0b0b1e;cursor:pointer}
 .map-btn.on{background:#ffd23a;color:#0b0b1e}.map-btn:hover:not(.on){background:#2f6bff;color:#fff}
+
+/* ================= MOBILE (body.mobile) ================= */
+#mobileGate{position:fixed;inset:0;z-index:60;display:flex;align-items:center;justify-content:center;padding:16px;background:rgba(4,10,48,.93);font-family:'Press Start 2P','Courier New',monospace;color:#fff}
+.gate-card{width:min(440px,100%);max-height:100%;overflow:auto;padding:22px 20px;background:#0a0e28;border:3px solid #0b0b1e;box-shadow:0 0 0 3px #ffd23a,6px 6px 0 #0b0b1e;display:flex;flex-direction:column;gap:12px;text-align:left}
+.gate-icon{font-size:34px}.gate-card h2{margin:0;font-size:15px;line-height:1.5;color:#ffd23a;font-weight:normal}.gate-text{margin:0;font:18px 'VT323','Courier New',monospace;color:#bcd0ff}.gate-card .home-eyebrow{margin:0}
+.gate-card .home-btn small{display:block;margin-top:8px;font:15px 'VT323','Courier New',monospace;letter-spacing:0;color:#ffe9c8;text-transform:none}
+.gate-glyph{display:inline-block;width:20px;color:#ffd23a}
+@media (max-height:440px){.gate-card{padding:14px 16px;gap:8px}.gate-icon{display:none}.gate-card h2{font-size:12px}}
+#rotateHint{display:none;position:fixed;inset:0;z-index:55;flex-direction:column;align-items:center;justify-content:center;gap:14px;background:#06103a;color:#fff;font-family:'Press Start 2P','Courier New',monospace;text-align:center}
+#rotateHint b{font-size:14px;color:#ffd23a;font-weight:normal}#rotateHint span{font:18px 'VT323',monospace;color:#bcd0ff}
+.phone-icon{width:46px;height:78px;border:4px solid #fff;border-radius:8px;animation:rot 1.6s ease-in-out infinite}
+@keyframes rot{0%,20%{transform:rotate(0)}60%,100%{transform:rotate(-90deg)}}
+@media (orientation:portrait){body.mobile.want-landscape #rotateHint{display:flex}}
+
+body.mobile #snd,body.mobile .flight-help{display:none!important}
+body.mobile #strip{display:none!important}
+/* top bar: wave (left) · health (centre) · credits (right) */
+body.mobile #combatHud .hud-top{padding:8px 12px;background:linear-gradient(rgba(4,10,48,.55),transparent)}
+body.mobile .hud-top small{font-size:8px;letter-spacing:1px}
+body.mobile .hud-top h2{font-size:14px;margin:3px 0}
+body.mobile .hud-top h2 span{display:inline;font-size:9px;margin-left:8px}
+body.mobile .hull{text-align:right}
+body.mobile .health{top:6px;bottom:auto;width:min(300px,36vw);padding:4px 7px 5px;font-size:7px;box-shadow:0 0 0 2px #2f6bff,3px 3px 0 #0b0b1e}
+body.mobile .health-label{margin-bottom:3px;letter-spacing:1px}
+body.mobile .health-cells{height:8px;gap:1px}
+body.mobile .mission{top:52px;font-size:9px;letter-spacing:1px}
+/* weapon card: compact, top-right under credits */
+body.mobile .loadout{top:46px;bottom:auto;right:10px;padding:6px 9px;background:rgba(4,10,48,.6);border-right:2px solid #ffd23a;max-width:42vw}
+body.mobile .loadout>small,body.mobile .loadout small{display:none}
+body.mobile .loadout h2{font-size:11px;margin:2px 0}
+body.mobile .loadout p{font-size:8px;margin:2px 0}
+body.mobile .ammo-status{font-size:8px}
+body.mobile .hud-weapon-art{width:34px;height:auto;float:left;margin-right:6px}
+body.mobile .attack-warning{top:auto;bottom:12px;left:50%;transform:translateX(-50%);width:min(320px,46vw);min-width:0;padding:7px 9px;font-size:9px}
+/* aim-assist pill under radar, action buttons above the thumb cluster */
+body.mobile #aimAssistToggle{top:auto;bottom:12px;left:12px;right:auto;font-size:8px;padding:6px 8px}
+body.mobile #cycleWeapon,body.mobile #timedEvade{top:auto;width:64px;height:40px;padding:0;border-radius:20px;font:9px 'Press Start 2P',monospace;letter-spacing:0}
+body.mobile #timedEvade{right:12px;bottom:calc(max(18px,env(safe-area-inset-bottom)) + 206px)}
+body.mobile #cycleWeapon{right:84px;bottom:calc(max(18px,env(safe-area-inset-bottom)) + 206px)}
+body.mobile #tb{transform:scale(.86);transform-origin:bottom right}
+@media (max-height:420px){body.mobile #tb{transform:scale(.72)}body.mobile #timedEvade,body.mobile #cycleWeapon{bottom:160px}}
+/* portrait: health full width on top, HUD row underneath */
+@media (orientation:portrait){
+ body.mobile .health{width:calc(100% - 20px);top:max(8px,env(safe-area-inset-top))}
+ body.mobile #combatHud .hud-top{padding-top:54px}
+ body.mobile .mission{top:196px}
+ body.mobile .loadout{top:96px}
+ body.mobile .attack-warning{bottom:auto;top:150px;width:calc(100% - 24px)}
+}
+/* home + mission screens in short landscape */
+@media (max-height:500px){
+ body.mobile .home-menu{top:10px;bottom:10px;transform:none;overflow:auto;width:min(420px,58vw)}
+ body.mobile .home-eyebrow{margin-bottom:6px;font-size:8px}
+ body.mobile .home-title{font-size:24px}body.mobile .home-title span{text-shadow:0 3px 0 #e0242a,3px 3px 0 #0b0b1e}
+ body.mobile .home-tag{display:none}
+ body.mobile .home-menu nav{gap:7px;margin-top:10px}
+ body.mobile .home-btn{padding:9px 12px;font-size:9px}body.mobile .home-btn.primary{padding:11px 12px;font-size:11px}
+ body.mobile .map-btn{padding:7px 6px;font-size:8px}
+ body.mobile .home-credits{margin-top:8px}
+ body.mobile .home-art{background-position:70% 30%}
+ body.mobile .mission-card{max-height:94vh;overflow:auto;padding:14px 18px}
+ body.mobile .mission-title{font-size:20px;margin-bottom:10px}
+ body.mobile .mission-stats{grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:10px}
+ body.mobile .mission-stats dd{font-size:10px}
+ body.mobile .mission-card nav{flex-direction:row;flex-wrap:wrap}
+}
 </style></head><body><canvas id="gl"></canvas><canvas id="ui"></canvas><div id="loading"><h1 class="pix">BAHADUR<br>BILLE</h1><div id="bar"><i></i></div><div id="ltxt" class="mono">Raising the hills…</div></div><div id="title"><h1 class="pix">BAHADUR<br>BILLE</h1><p class="sub mono">ROLL · BOOST · SKIM THE LAKE</p><p class="go pix" id="go">MOVE THE MOUSE TO TAKE THE STICK</p><p class="go2 pix">LEFT THUMB: DRAG TO STEER<br>RIGHT THUMB: BOOST · FIRE · ROLL · VIEW<br>HOLD BOOST + DRAG = STEER TOO</p></div><div id="toast" class="pix"></div><div id="strip" class="mono"><span class="opt"><b>MOUSE</b> steer</span><span class="sep opt">·</span><span class="opt"><b>CLICK</b> roll</span><span class="sep opt">·</span><span class="opt"><b>HOLD</b> boost</span><span class="sep opt">·</span><span class="opt"><b>RIGHT-CLICK / F</b> rocket</span><span class="sep opt">·</span><span class="opt"><b>SPACE</b> view</span><span id="rk"><span style="margin-right:4px">ROCKETS</span><i></i><i></i><i></i><i></i></span></div><button id="snd">SOUND: OFF</button><div id="stk"><i></i></div><div id="tb"><button id="tBoost">BOOST</button><button id="tFire">FIRE</button><button id="tRoll">ROLL</button><button id="tView">VIEW</button></div>
 <script>var BB_MAP=(()=>{try{return JSON.parse(localStorage.getItem('barrel-combat-v1')).map}catch(e){return ''}})()==='snow'?'snow':'valley',BB_HM=BB_MAP==='snow'?720:360,BB_NO_PULLUP=!0;
 var n=Math.PI*2;var W0=($)=>{let _=Math.hypot($[0],$[1],$[2])||1;return[$[0]/_,$[1]/_,$[2]/_]},q0=W0([-0.8,0.27,0.42]),y=($,_,Z)=>$<_?_:$>Z?Z:$,C=($,_,Z)=>$+(_-$)*Z;var F6=($)=>{if($%=n,$>Math.PI)$-=n;if($<-Math.PI)$+=n;return $},e6=($,_)=>[$[0]+_[0],$[1]+_[1],$[2]+_[2]],l0=($,_)=>[$[0]-_[0],$[1]-_[1],$[2]-_[2]],h0=($,_)=>[$[0]*_,$[1]*_,$[2]*_],J0=($,_)=>$[0]*_[0]+$[1]*_[1]+$[2]*_[2],r6=($,_)=>[$[1]*_[2]-$[2]*_[1],$[2]*_[0]-$[0]*_[2],$[0]*_[1]-$[1]*_[0]],c0=($,_,Z)=>[C($[0],_[0],Z),C($[1],_[1],Z),C($[2],_[2],Z)];function D7(){let Z=null,Q=0,O=360;function X(F,M,L){let I=Math.imul(F,374761393)+Math.imul(M,668265263)+Math.imul(L,1442695041)|0;return I=Math.imul(I^I>>>13,1274126177),I^=I>>>16,(I>>>0)/4294967296}function V(F,M,L,I){let K=Math.floor(F),N=Math.floor(M),j=F-K,T=M-N,H=j*j*(3-2*j),A=T*T*(3-2*T),k=(K%L+L)%L,z=(N%L+L)%L,h=(k+1)%L,P=(z+1)%L,u=X(k,z,I),o=X(h,z,I),g=X(k,P,I),L0=X(h,P,I);return u+(o-u)*H+(g-u)*A+(u-o-g+L0)*H*A}function Y(F,M,L,I,K,N){let j=0,T=1,H=0;for(let A=0;A<I;A++)j+=T*V(F*L,M*L,L,N+A*13),H+=T,T*=K,L*=2;return j/H}let D=(F,M,L)=>{let I=Math.min(1,Math.max(0,(L-F)/(M-F)));return I*I*(3-2*I)};function B(F,M){let L=M-F,I=new Float32Array(L*1024),K=new Uint8Array(L*1024*4);for(let N=F;N<M;N++)for(let j=0;j<1024;j++){let T=j/1024,H=N/1024,A=T+0.05*(Y(T,H,3,3,0.5,90)-0.5),k=H+0.05*(Y(T,H,3,3,0.5,91)-0.5),z=Y(A,k,2,6,0.45,1),h=Y(A,k,5,4,0.36,2),P=1-Math.abs(2*Y(A,k,3,3,0.4,3)-1);P*=P;let u=D(0.46,0.7,z),o=(N-F)*1024+j;I[o]=0.7*z+0.3*h+0.16*P*u;let g=Y(T,H,10,4,0.55,21),L0=V(T*16,H*16,16,22)*0.7+V(T*37,H*37,37,23)*0.3,R0=Y(T,H,128,2,0.5,41);K[o*4+1]=Math.min(255,g*255*1.15),K[o*4+2]=Math.min(255,L0*255),K[o*4+3]=R0*255}return{h:I,c:K}}function q(F,M,L,I,K,N){let j=F*L,T=M*L,H=Math.floor(j),A=Math.floor(T),k=0;for(let z=-1;z<=1;z++)for(let h=-1;h<=1;h++){let P=H+h,u=A+z,o=(P%L+L)%L,g=(u%L+L)%L;if(X(o,g,I)>K)continue;let L0=P+0.5+0.3*(X(o,g,I+1)-0.5),R0=u+0.5+0.3*(X(o,g,I+2)-0.5),o0=(0.2+0.14*X(o,g,I+3))*N,E7=0.72+0.28*X(o,g,I+4);for(let j0=0;j0<9;j0++){let f6=X(o,g,I+10+j0*3)*6.2832,x0=j0===0?0:o0*(0.2+0.7*X(o,g,I+11+j0*3)),q6=o0*(j0===0?0.46:(0.26+0.26*X(o,g,I+12+j0*3))*(1-0.25*x0/o0)),u6=j-(L0+Math.cos(f6)*x0),C6=T-(R0+Math.sin(f6)*x0),o6=(u6*u6+C6*C6)/(q6*q6);if(o6>=1)continue;let b6=Math.sqrt(1-o6)*(0.45+0.9*q6/o0)*0.8*E7*(1-0.3*x0/o0);if(b6>k)k=b6}}return k}function E(F,M){let L=M-F,I=new Float32Array(L*512);for(let K=F;K<M;K++)for(let N=0;N<512;N++){let j=N/512,T=K/512,H=j+0.03*(Y(j,T,6,3,0.5,60)-0.5),A=T+0.03*(Y(j,T,6,3,0.5,61)-0.5),k=q(H,A,9,70,0.2,1),z=q(H,A,21,80,0.1,0.8)*0.6,h=Math.max(k,z)+(k>0?0.05*(Y(j,T,40,2,0.5,62)-0.5):0);I[(K-F)*512+N]=Math.min(1,Math.max(0,h))}return I}function U(F,M,L,I,K){let N=M-F,j=new Uint8Array(N*1024),T=Q,H=O;for(let A=F;A<M;A++)for(let k=0;k<1024;k++){let z=Math.max(Z[A*1024+k]*H,T),h=-1e9;for(let u=1;u<=100;u++){let o=4*u+0.06*u*u;if(z+o*K>H)break;let g=(Math.round(k+L*o/4)%1024+1024)%1024,L0=(Math.round(A+I*o/4)%1024+1024)%1024,R0=Z[L0*1024+g]*H-(z+o*K);if(R0>h)h=R0}let P=Math.min(1,Math.max(0,h/14));j[(A-F)*1024+k]=Math.round((1-P)*255)}return j}onmessage=(F)=>{let M=F.data;if(M.t==="terrain"){let L=B(M.y0,M.y1);postMessage({t:"terrain",y0:M.y0,h:L.h,c:L.c},[L.h.buffer,L.c.buffer])}else if(M.t==="cloud"){let L=E(M.y0,M.y1);postMessage({t:"cloud",y0:M.y0,o:L},[L.buffer])}else if(M.t==="H")Z=M.H,Q=M.WM,O=M.HM,postMessage({t:"ack"});else if(M.t==="shadow"){let L=U(M.y0,M.y1,M.dx,M.dz,M.slope);postMessage({t:"shadow",y0:M.y0,o:L},[L.buffer])}}}var a=new Float32Array(1048576),U6=new Uint8Array(4194304),a6=new Uint8Array(262144);function n6($,_,Z){return new Promise((Q)=>{let O=0,X=0,V=_.length,Y=(D)=>{if(O>=V)return;D.postMessage(_[O++])};if($.forEach((D)=>{D.onmessage=(B)=>{if(Z(B.data),X++,X===V)Q();else Y(D)},Y(D)}),V===0)Q()})}async function V7($){let _="("+D7.toString()+")()",Z=URL.createObjectURL(new Blob([_],{type:"text/javascript"})),Q=y((navigator.hardwareConcurrency||4)-1,2,6),O=[];for(let H=0;H<Q;H++)O.push(new Worker(Z));let X=32,V=[];for(let H=0;H<1024;H+=X)V.push({t:"terrain",y0:H,y1:H+X});for(let H=0;H<512;H+=X)V.push({t:"cloud",y0:H,y1:H+X});let Y=V.length+1024/X,D=0,B=new Float32Array(262144);$(0,"Raising the hills…"),await n6(O,V,(H)=>{if(H.t==="terrain")a.set(H.h,H.y0*1024),U6.set(H.c,H.y0*1024*4);else B.set(H.o,H.y0*512);D++,$(D/Y,D<V.length*0.7?"Raising the hills…":"Filling the lakes…")});let q=8192,E=1e9,U=-1e9;for(let H=0;H<a.length;H++){let A=a[H];if(A<E)E=A;if(A>U)U=A}let F=new Uint32Array(q),M=(q-1)/(U-E);for(let H=0;H<a.length;H++)F[(a[H]-E)*M|0]++;let L=new Float32Array(q),I=0;for(let H=0;H<q;H++)I+=F[H],L[H]=I/a.length;let K=0.34;for(let H=0;H<a.length;H++){let A=L[(a[H]-E)*M|0];a[H]=BB_MAP==='snow'?(A<0.1?0.135*Math.pow(A/0.1,0.6):0.135+0.8*Math.pow((A-0.1)/0.9,1.45)):(A<K?0.27*Math.pow(A/K,0.7):0.27+0.66*Math.pow((A-K)/(1-K),2.3))}for(let H=0;H<B.length;H++)a6[H]=Math.round(y(B[H],0,1)*255);$(D/Y,"Casting long shadows…");let N=a;await new Promise((H)=>{let A=0;O.forEach((k)=>{k.onmessage=()=>{if(++A===O.length)H()},k.postMessage({t:"H",H:N,WM:97.2,HM:BB_HM})})});let j=Math.hypot(q0[0],q0[2]),T=[];for(let H=0;H<1024;H+=X)T.push({t:"shadow",y0:H,y1:H+X,dx:q0[0]/j,dz:q0[2]/j,slope:q0[1]/j});await n6(O,T,(H)=>{let A=H.o,k=H.y0*1024;for(let z=0;z<A.length;z++)U6[(k+z)*4]=A[z];D++,$(D/Y,"Casting long shadows…")}),O.forEach((H)=>H.terminate()),URL.revokeObjectURL(Z),$(1,"Ready for take-off")}function a0($,_){let Z=$/4096*1024-0.5,Q=_/4096*1024-0.5,O=Math.floor(Z),X=Math.floor(Q),V=Z-O,Y=Q-X,D=(O%1024+1024)%1024,B=(D+1)%1024,q=(X%1024+1024)%1024,E=(q+1)%1024,U=a[q*1024+D],F=a[q*1024+B],M=a[E*1024+D],L=a[E*1024+B];return(U+(F-U)*V+(M-U)*Y+(U-F-M+L)*V*Y)*BB_HM}var X0=($,_)=>Math.max(a0($,_),97.2);function Y7($,_){let Z=(Math.round($/4096*1024)%1024+1024)%1024,Q=(Math.round(_/4096*1024)%1024+1024)%1024;return a[Q*1024+Z]}var B6=document.getElementById("gl"),I6=document.getElementById("ui"),W=B6.getContext("webgl2",{antialias:!1,alpha:!1,depth:!0,stencil:!1,powerPreference:"high-performance"});if(!W)throw document.getElementById("ltxt").textContent="This toy needs WebGL2 — please try a recent browser.",Error("no webgl2");var x6=I6.getContext("2d",{alpha:!0}),W7=`#version 300 es
@@ -287,7 +353,7 @@ t7=function(){for(let i=0;i<Q0.v.length;i+=3)Q0.v[i]=rawMesh[i]*JETS[profile.jet
 function drawCombat(){const width=innerWidth,height=innerHeight;if(overlay.width!==width||overlay.height!==height){overlay.width=width;overlay.height=height}ctx.clearRect(0,0,width,height);if(combat.mode!=='combat')return;const sx=width/f,sy=height/J,project=p=>{const q=T6(t,[p.x,p.y,p.z]);return q?[q[0]*sx,q[1]*sy,q[2]]:null};
  drawWorldSprites(project);drawAssistCue(project);
  const aim=D6(t,B0(G.psi,G.th,0).f)||[f/2,J/2],ax=aim[0]*sx,ay=aim[1]*sy;ctx.strokeStyle=combat.lock>=requiredLock()?'#b6ffd2':'#e5f3dc';ctx.lineWidth=1.5;ctx.beginPath();ctx.arc(ax,ay,18,0,Math.PI*2);ctx.moveTo(ax-28,ay);ctx.lineTo(ax-12,ay);ctx.moveTo(ax+12,ay);ctx.lineTo(ax+28,ay);ctx.moveTo(ax,ay-28);ctx.lineTo(ax,ay-12);ctx.stroke();if(combat.target){ctx.beginPath();ctx.arc(ax,ay,24,-Math.PI/2,-Math.PI/2+Math.PI*2*Math.min(1,combat.lock/requiredLock()));ctx.stroke()}
- const radius=width<650?64:90,cx=radius+24,cy=height-radius-55,range=3000;ctx.fillStyle='rgba(9,29,32,.85)';ctx.beginPath();ctx.arc(cx,cy,radius,0,Math.PI*2);ctx.fill();ctx.strokeStyle='#426d64';for(const r of [radius/2,radius]){ctx.beginPath();ctx.arc(cx,cy,r,0,Math.PI*2);ctx.stroke()}ctx.beginPath();ctx.moveTo(cx-radius,cy);ctx.lineTo(cx+radius,cy);ctx.moveTo(cx,cy-radius);ctx.lineTo(cx,cy+radius);ctx.stroke();ctx.strokeStyle='#8ab69a';ctx.beginPath();ctx.moveTo(cx,cy);ctx.lineTo(cx+Math.sin(combat.elapsed)*radius,cy-Math.cos(combat.elapsed)*radius);ctx.stroke();for(const en of combat.enemies){const dx=en.x-G.x,dz=en.z-G.z,rx=(dx*Math.cos(G.psi)+dz*Math.sin(G.psi))/range*radius,ry=(-dx*Math.sin(G.psi)+dz*Math.cos(G.psi))/range*radius,mag=Math.hypot(rx,ry),scale=Math.min(1,(radius-5)/(mag||1));ctx.fillStyle=en===combat.target?'#baffc8':'#ff927b';ctx.fillRect(cx+rx*scale-3,cy+ry*scale-3,6,6)}ctx.fillStyle='#d5ffdc';ctx.beginPath();ctx.moveTo(cx,cy-6);ctx.lineTo(cx-4,cy+5);ctx.lineTo(cx+4,cy+5);ctx.fill();ctx.font='11px monospace';ctx.fillText('RADAR / 3 KM · UP = AHEAD',cx-radius,cy+radius+20);
+ const isMob=document.body.classList.contains('mobile'),radius=isMob?Math.min(46,height*.12):width<650?64:90,cx=radius+(isMob?14:24),cy=isMob?radius+(height>width?118:62):height-radius-55,range=3000;ctx.fillStyle='rgba(9,29,32,.85)';ctx.beginPath();ctx.arc(cx,cy,radius,0,Math.PI*2);ctx.fill();ctx.strokeStyle='#426d64';for(const r of [radius/2,radius]){ctx.beginPath();ctx.arc(cx,cy,r,0,Math.PI*2);ctx.stroke()}ctx.beginPath();ctx.moveTo(cx-radius,cy);ctx.lineTo(cx+radius,cy);ctx.moveTo(cx,cy-radius);ctx.lineTo(cx,cy+radius);ctx.stroke();ctx.strokeStyle='#8ab69a';ctx.beginPath();ctx.moveTo(cx,cy);ctx.lineTo(cx+Math.sin(combat.elapsed)*radius,cy-Math.cos(combat.elapsed)*radius);ctx.stroke();for(const en of combat.enemies){const dx=en.x-G.x,dz=en.z-G.z,rx=(dx*Math.cos(G.psi)+dz*Math.sin(G.psi))/range*radius,ry=(-dx*Math.sin(G.psi)+dz*Math.cos(G.psi))/range*radius,mag=Math.hypot(rx,ry),scale=Math.min(1,(radius-5)/(mag||1));ctx.fillStyle=en===combat.target?'#baffc8':'#ff927b';ctx.fillRect(cx+rx*scale-3,cy+ry*scale-3,6,6)}ctx.fillStyle='#d5ffdc';ctx.beginPath();ctx.moveTo(cx,cy-6);ctx.lineTo(cx-4,cy+5);ctx.lineTo(cx+4,cy+5);ctx.fill();if(!isMob){ctx.font='11px monospace';ctx.fillText('RADAR / 3 KM · UP = AHEAD',cx-radius,cy+radius+20)}
  const nearest=combat.enemies.reduce((a,b)=>!a||dist(b,G)<dist(a,G)?b:a,null);let bearing='';if(nearest){const delta=F6(Math.atan2(nearest.x-G.x,-(nearest.z-G.z))-G.psi);bearing=`NEAREST ${Math.round(dist(G,nearest))}m / ${Math.abs(delta)<.2?'AHEAD':delta>0?'TURN RIGHT →':'← TURN LEFT'}`}
  if(combat.hudAt&&combat.elapsed-combat.hudAt<.1&&combat.hudWeapon===combat.weapon)return;combat.hudAt=combat.elapsed;combat.hudWeapon=combat.weapon;
  hud.innerHTML=`<div class="hud-top"><div><small>BAHADUR BILLE / SORTIE · ${profile.difficulty.toUpperCase()}</small><h2>WAVE ${String(combat.wave).padStart(2,'0')} <span>${combat.enemies.length} HOSTILES</span></h2></div>${healthBar()}<div class="hull"><small>${profile.credits} CR · ${combat.kills} KILLS</small></div></div><div class="mission">${combat.messageT>0?combat.message:bearing}</div>${threatMarkup()}<div class="loadout">${spriteIcon('weapons/'+weaponArt[combat.weapon]+'/equipment','hud-weapon-art')}<small>${JETS[profile.jet].name} / ${Math.round(G.spd)} m/s</small><h2>${WEAPONS[combat.weapon].name}</h2><p>${combat.cool>0?'CYCLING '+combat.cool.toFixed(1)+'s':WEAPONS[combat.weapon].homing?(combat.lock>=requiredLock()?'TARGET LOCKED / FIRE':'ACQUIRE TARGET'):'WEAPON READY'}</p><div class="ammo-status">MISSILES ${combat.missiles}/${MISSILE_CAPACITY} · ROLLS ${combat.rollProgress}/3</div><small>R BARREL ROLL ${combat.rollCooldown>0?combat.rollCooldown.toFixed(1)+'s':'READY'} · 3 ROLLS = +1 MISSILE</small></div><div class="flight-help">WASD / MOUSE steer · SPACE / CLICK fire · R roll · RIGHT CLICK / E evade · H assist · V view · ESC pause</div>`;
@@ -365,5 +431,24 @@ function missionComplete(bonus){
  mission.querySelector('[data-m=go]').onclick=()=>{mission.hidden=true;launch()};
  mission.querySelector('[data-m=hangar]').onclick=()=>{mission.hidden=true;hangar('Airspace secured','Wave complete. +'+bonus+' CR bonus. Repair, upgrade, and return to the fight.')};
  mission.querySelector('[data-m=diff]').onclick=e=>{profile.difficulty=profile.difficulty==='hard'?'easy':'hard';save();e.target.textContent='DIFFICULTY: '+profile.difficulty.toUpperCase();mission.querySelector('.home-eyebrow').textContent=`WAVE ${String(cleared).padStart(2,'0')} CLEARED · ${profile.difficulty.toUpperCase()}`};
+}
+
+/* Mobile: landscape / full-screen choice on first load, rotate hint, and a touch-first HUD layout. */
+const IS_MOBILE=matchMedia('(pointer:coarse)').matches||/Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+if(IS_MOBILE){
+ document.body.classList.add('mobile');
+ const rotate=document.createElement('div');rotate.id='rotateHint';rotate.innerHTML='<div class="phone-icon"></div><b>ROTATE YOUR PHONE</b><span>Bahadur Bille plays in landscape</span>';document.body.append(rotate);
+ const fsSupported=!!(document.documentElement.requestFullscreen||document.documentElement.webkitRequestFullscreen);
+ const goFull=async()=>{const el=document.documentElement;try{if(el.requestFullscreen)await el.requestFullscreen({navigationUI:'hide'});else if(el.webkitRequestFullscreen)el.webkitRequestFullscreen()}catch(e){}};
+ const gate=document.createElement('section');gate.id='mobileGate';
+ gate.innerHTML=`<div class="gate-card"><div class="gate-icon">📱</div><p class="home-eyebrow">MOBILE DEVICE DETECTED</p><h2>You are playing on a mobile device</h2><p class="gate-text">Pick how you want to fly:</p>
+  <button class="home-btn primary" data-g="land"><span class="gate-glyph">⟲</span> SWITCH TO LANDSCAPE<small>Recommended · full screen, turned sideways</small></button>
+  <button class="home-btn" data-g="full"><span class="gate-glyph">⛶</span> FULL SCREEN<small>${fsSupported?'Keep your current orientation, hide the browser bars':'Not supported by this browser: use Share → Add to Home Screen'}</small></button></div>`;
+ for(const ev of ['touchstart','touchmove','touchend','mousedown','mouseup'])gate.addEventListener(ev,e=>e.stopPropagation());
+ document.body.append(gate);
+ gate.querySelector('[data-g=land]').onclick=async()=>{document.body.classList.add('want-landscape');await goFull();try{await screen.orientation.lock('landscape')}catch(e){/* iOS and some browsers: the rotate hint asks the player instead */}gate.remove()};
+ gate.querySelector('[data-g=full]').onclick=async()=>{document.body.classList.remove('want-landscape');await goFull();gate.remove()};
+ // keep the canvas sized after rotation / fullscreen changes
+ const nudge=()=>setTimeout(()=>dispatchEvent(new Event('resize')),250);addEventListener('orientationchange',nudge);document.addEventListener('fullscreenchange',nudge);
 }
 </script></body></html>
