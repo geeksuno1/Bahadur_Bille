@@ -289,7 +289,8 @@ const spriteReady=Promise.all(Object.entries(SPRITE_MANIFEST.sheets).map(async([
   for(let yy=0;yy<frame.h;yy++)for(let xx=0;xx<frame.w;xx++)if(pixels[(yy*frame.w+xx)*4+3]>150){left=Math.min(left,xx);right=Math.max(right,xx);top=Math.min(top,yy);bottom=Math.max(bottom,yy)}
   if(left>right){left=0;top=0;right=frame.w-1;bottom=frame.h-1}
   // keep only the widest solid run of columns/rows, so slivers bleeding in from neighbouring cells are dropped
-  const run=(n,used)=>{let best=[0,n-1],bl=-1,st=-1,gap=0;for(let i=0;i<=n;i++){const on=i<n&&used(i);if(on){if(st<0)st=i;gap=0}else if(st>=0&&++gap>4||i===n&&st>=0){const end=i-gap;if(end-st>bl){bl=end-st;best=[st,end]}st=-1;gap=0}}return best};
+  // drop only thin strips touching the cell edge (bleed from neighbouring cells); keep every other detached part (wing tips, turrets)
+  const run=(n,used)=>{const segs=[];let st=-1;for(let i=0;i<=n;i++){const on=i<n&&used(i);if(on&&st<0)st=i;if(!on&&st>=0){segs.push([st,i-1]);st=-1}}const keep=segs.filter(([a,b])=>!((a<=2||b>=n-3)&&(b-a+1)<n*.12));if(!keep.length)return segs.length?[segs[0][0],segs[segs.length-1][1]]:[0,n-1];return[keep[0][0],keep[keep.length-1][1]]};
   if(right>left){const colOn=xx=>{for(let yy=top;yy<=bottom;yy++)if(pixels[(yy*frame.w+xx)*4+3]>150)return true;return false};[left,right]=run(frame.w,colOn);const rowOn=yy=>{for(let xx=left;xx<=right;xx++)if(pixels[(yy*frame.w+xx)*4+3]>150)return true;return false};[top,bottom]=run(frame.h,rowOn)}
   const pad=2;left=Math.max(0,left-pad);top=Math.max(0,top-pad);right=Math.min(frame.w-1,right+pad);bottom=Math.min(frame.h-1,bottom+pad);
   spriteArt.frames.set(key,{image:im,x:frame.x+left,y:frame.y+top,w:right-left+1,h:bottom-top+1});
