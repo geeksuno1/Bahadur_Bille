@@ -204,6 +204,33 @@ body.cockpit-view .attack-warning{display:none!important}
 .boss-select-nav{margin-top:14px}
 @media (max-width:700px),(max-height:500px){.boss-grid{gap:8px}.boss-tile b{font-size:8px}.boss-tile small{font-size:13px}.boss-tile em{font-size:7px}.boss-select{padding:12px}.boss-select .boss-title{font-size:18px;margin:2px 0 8px}}
 @media (orientation:portrait){.boss-grid{grid-template-columns:1fr}}
+
+.pick-bg{filter:brightness(.55);transition:background-image .25s}
+.boss-tile.sel{transform:translateY(-4px);box-shadow:0 0 0 3px var(--bc),0 0 18px var(--bc)}
+/* phones: boss intro/result windows */
+@media (max-height:500px) and (orientation:landscape){
+ #bossCard{justify-content:flex-start}
+ #bossCard .boss-art{left:44%;background-size:cover;background-position:center}
+ #bossCard .boss-art::after{content:'';position:absolute;inset:0;background:linear-gradient(90deg,#12051f 0,rgba(18,5,31,0) 30%)}
+ #bossCard .boss-panel{margin-left:8px;width:46%;max-height:94vh;padding:10px 12px}
+ #bossCard .boss-panel .home-eyebrow{font-size:7px;margin:0}
+ #bossCard .boss-title{font-size:17px;margin:4px 0 6px}
+ #bossCard .boss-sub,#bossCard .boss-hull{font-size:14px;margin:0 0 6px;line-height:1.15}
+ #bossCard .boss-rules{font-size:13px;line-height:1.15;margin:0 0 6px;padding-left:16px}
+ #bossCard .boss-panel nav{flex-direction:row;flex-wrap:wrap;gap:5px}
+ #bossCard .boss-panel .home-btn{padding:7px 8px;font-size:8px}
+ #bossCard .boss-panel .home-btn.primary{flex-basis:100%;font-size:10px}
+ #bossCard .mission-stats{grid-template-columns:1fr 1fr;gap:4px;margin-bottom:6px}
+ .boss-select{width:96vw;padding:8px 10px}.boss-grid{gap:6px}.boss-tile{padding-bottom:6px;gap:3px}
+}
+@media (orientation:portrait){
+ #bossCard{flex-direction:column;justify-content:flex-start}
+ #bossCard .boss-art{bottom:auto;height:34vh;background-size:cover;background-position:center}
+ #bossCard .boss-panel{margin:34vh 0 0;width:100%;max-height:66vh;border-left:0;border-right:0;padding:12px 14px}
+ #bossCard .boss-title{font-size:22px;margin:4px 0 8px}
+ #bossCard .boss-rules{font-size:15px}
+ .boss-select{margin:0;width:100%;max-height:100vh}.boss-grid{grid-template-columns:1fr}.boss-thumb{aspect-ratio:21/7}
+}
 </style><style>:root{--load-art:url("assets/home/loading-screen.jpg")}</style></head><body><canvas id="gl"></canvas><canvas id="ui"></canvas><div id="loading"><div class="load-panel"><div id="bar"><i></i></div><div id="ltxt" class="mono">Waking up the Kats…</div></div></div><div id="title"><h1 class="pix">BAHADUR<br>BILLE</h1><p class="sub mono">ROLL · BOOST · SKIM THE LAKE</p><p class="go pix" id="go">MOVE THE MOUSE TO TAKE THE STICK</p><p class="go2 pix">LEFT THUMB: DRAG TO STEER<br>RIGHT THUMB: BOOST · FIRE · ROLL · VIEW<br>HOLD BOOST + DRAG = STEER TOO</p></div><div id="toast" class="pix"></div><div id="strip" class="mono"><span class="opt"><b>MOUSE</b> steer</span><span class="sep opt">·</span><span class="opt"><b>CLICK</b> roll</span><span class="sep opt">·</span><span class="opt"><b>HOLD</b> boost</span><span class="sep opt">·</span><span class="opt"><b>RIGHT-CLICK / F</b> rocket</span><span class="sep opt">·</span><span class="opt"><b>SPACE</b> view</span><span id="rk"><span style="margin-right:4px">ROCKETS</span><i></i><i></i><i></i><i></i></span></div><button id="snd">SOUND: OFF</button><div id="stk"><i></i></div><div id="tb"><button id="tBoost">BOOST</button><button id="tFire">FIRE</button><button id="tRoll">ROLL</button><button id="tView">VIEW</button></div>
 <script>var BB_MAP=(()=>{try{const m=JSON.parse(localStorage.getItem('barrel-combat-v1')).map;return m==='snow'||m==='volcano'?m:'valley'}catch(e){return 'valley'}})(),BB_HM=BB_MAP==='snow'?720:BB_MAP==='volcano'?600:360,BB_NO_PULLUP=!0;
 var BB_LOAD_LINES=['Waking up the Kats…','Firing up the twin engines…','Sharpening the claws…','Loading Scratcher Missiles…','Scanning MegaKat City…','Trouble brewing downtown…','Clearing the rooftops…','Bandits detected in the skies…','All systems are PURR-fect!','Claws out. Time to fly!'];
@@ -563,7 +590,7 @@ const BOSS_ORDER=['kaaldoot','voltclaw','ironhide'];
 let bossDef=BOSS_DEFS.kaaldoot;
 const boss={on:false};
 const hardMul=v=>Math.round(v*(profile.difficulty==='hard'?1.3:1));
-function bossUnlocked(id){if(profile.bossUnlocked)return true;const d=BOSS_DEFS[id||'kaaldoot'];return profile.best>=d.unlock}
+function bossUnlocked(id){return true}
 function anyBossUnlocked(){return BOSS_ORDER.some(bossUnlocked)}
 function bossBody(){return combat.enemies.find(e=>e.boss)}
 function bossSpeed(){const d=boss.dist||900,base=stats().speed*bossDef.speed,ps=jetGroundSpeed();if(d<520)return Math.max(base*1.05,ps*1.12);if(boss.phase===3)return base*(d>2400?.95:1.1);return base*(d>1800?.7:.9)}
@@ -652,11 +679,11 @@ const bossCard=document.createElement('section');bossCard.id='bossCard';bossCard
 for(const ev of ['touchstart','touchmove','touchend','mousedown','mouseup'])bossCard.addEventListener(ev,e=>e.stopPropagation());
 const bannerOf=id=>BOSS_BANNERS[BOSS_DEFS[id].banner];
 function showBossSelect(){home.hidden=true;mission.hidden=true;
- bossCard.innerHTML=`<div class="boss-art" style="background-image:url(${bannerOf('kaaldoot')});filter:brightness(.35) blur(2px)"></div><div class="boss-select"><p class="home-eyebrow">☠ CHOOSE YOUR TARGET · ${profile.difficulty.toUpperCase()}</p><h1 class="boss-title">BOSSES</h1>
- <div class="boss-grid">${BOSS_ORDER.map(id=>{const B=BOSS_DEFS[id],ok=bossUnlocked(id),beat=profile.bossesBeaten?.[id];return `<button class="boss-tile ${ok?'':'locked'}" data-pick="${id}" ${ok?'':'disabled'} style="--bc:${B.color}"><span class="boss-thumb" style="background-image:url(${bannerOf(id)})"></span><b>${B.name}</b><small>${B.kind}${beat?' · ✓ DEFEATED':''}</small><em>${ok?'▶ SELECT':'🔒 REACH WAVE '+B.unlock}</em></button>`}).join('')}</div>
+ bossCard.innerHTML=`<div class="boss-art pick-bg" style="background-image:url(${bannerOf(bossDef.id)})"></div><div class="boss-select"><p class="home-eyebrow">☠ CHOOSE YOUR TARGET · ${profile.difficulty.toUpperCase()}</p><h1 class="boss-title">BOSSES</h1>
+ <div class="boss-grid">${BOSS_ORDER.map(id=>{const B=BOSS_DEFS[id],ok=bossUnlocked(id),beat=profile.bossesBeaten?.[id];return `<button class="boss-tile ${ok?'':'locked'} ${id===bossDef.id?'sel':''}" data-pick="${id}" ${ok?'':'disabled'} style="--bc:${B.color}"><span class="boss-thumb" style="background-image:url(${bannerOf(id)})"></span><b>${B.name}</b><small>${B.kind}${beat?' · ✓ DEFEATED':''}</small><em>${ok?'▶ SELECT':'🔒 REACH WAVE '+B.unlock}</em></button>`}).join('')}</div>
  <nav class="boss-select-nav"><button class="home-btn small" data-b="back">BACK</button></nav></div>`;
  bossCard.hidden=false;
- bossCard.querySelectorAll('[data-pick]').forEach(b=>b.onclick=()=>showBossIntro(b.dataset.pick));
+ const bg=bossCard.querySelector('.pick-bg');bossCard.querySelectorAll('[data-pick]').forEach(b=>{const show=()=>{bg.style.backgroundImage=`url(${bannerOf(b.dataset.pick)})`;bossCard.querySelectorAll('.boss-tile').forEach(t=>t.classList.toggle('sel',t===b))};b.onmouseenter=show;b.onfocus=show;b.onclick=()=>{show();bossDef=BOSS_DEFS[b.dataset.pick];setTimeout(()=>showBossIntro(b.dataset.pick),180)}});
  bossCard.querySelector('[data-b=back]').onclick=()=>{bossCard.hidden=true;showHome()};}
 function showBossIntro(id){id=id||bossDef.id;if(!bossUnlocked(id)){notice('Reach wave '+BOSS_DEFS[id].unlock+' to unlock this boss');return}home.hidden=true;const B=BOSS_DEFS[id];bossDef=B;
  bossCard.innerHTML=`<div class="boss-art" style="background-image:url(${bannerOf(id)})"></div><div class="boss-panel" style="--bc:${B.color}"><p class="home-eyebrow">⚠ BOSS ENCOUNTER · ${profile.difficulty.toUpperCase()}</p><h1 class="boss-title">${B.name}</h1><p class="boss-sub">${B.blurb.replace('{map}',({snow:'snow peaks',volcano:'volcano ring',valley:'valley'})[BB_MAP])}</p>
@@ -830,7 +857,7 @@ function showHome(){
   <p class="home-tag">Two brave cats. One sky full of bandits.</p>
   <nav>
    <button class="home-btn primary" data-act="fly" ${ready?'':'disabled'}>${ready?'▶ TAKE OFF':'LOADING SKIES…'}</button>
-   <button class="home-btn boss-btn" data-act="boss" ${anyBossUnlocked()?'':'disabled'}>☠ BOSSES <small class="diff-note">${anyBossUnlocked()?BOSS_ORDER.filter(bossUnlocked).length+' of 3 unlocked · pick your target':'first boss unlocks at wave 5'}</small></button>
+   <button class="home-btn boss-btn" data-act="boss" ${anyBossUnlocked()?'':'disabled'}>☠ BOSSES <small class="diff-note">KAALDOOT · VOLTCLAW · IRONHIDE</small></button>
    <button class="home-btn" data-act="hangar">HANGAR & UPGRADES</button>
    <div class="map-pick"><span>MAP</span><button class="map-btn ${BB_MAP==='valley'?'on':''}" data-map="valley">VALLEY</button><button class="map-btn ${BB_MAP==='snow'?'on':''}" data-map="snow">SNOW</button><button class="map-btn ${BB_MAP==='volcano'?'on':''}" data-map="volcano">VOLCANO</button></div>
    <button class="home-btn" data-act="how">HOW TO PLAY</button>
