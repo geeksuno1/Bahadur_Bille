@@ -259,7 +259,7 @@ function drawPlayerExhaust(view,cx,cy,w,h,angle,boost){
   o.length=(boost?44:18)*nz.len+ (boost?(Math.sin(combat.elapsed*30+i)*3):0);o.width=boost?5:3.6;o.palette=boost?BOOST_FLAME:IDLE_FLAME;
   fl.dirty=true;pfxRender(fl);
   const lx=(u-.5)*w,ly=(v-.5)*h,x=cx+lx*cos-ly*sin,y=cy+lx*sin+ly*cos,s=w/70;
-  ctx.save();ctx.translate(x,y);ctx.rotate(nz.dir+angle-Math.PI/2);ctx.imageSmoothingEnabled=false;ctx.globalCompositeOperation='lighter';ctx.globalAlpha=.55;ctx.drawImage(fl.canvas,-fl.OX*s*1.25,-fl.OY*s,fl.W*s*1.25,fl.H*s);ctx.globalCompositeOperation='source-over';ctx.globalAlpha=1;ctx.drawImage(fl.canvas,-fl.OX*s,-fl.OY*s,fl.W*s,fl.H*s);ctx.restore()});
+  ctx.save();ctx.translate(x,y);ctx.rotate(nz.dir+angle-Math.PI/2);ctx.imageSmoothingEnabled=false;ctx.globalCompositeOperation='lighter';ctx.globalAlpha=.55*(window.exhaustAlpha??1);ctx.drawImage(fl.canvas,-fl.OX*s*1.25,-fl.OY*s,fl.W*s*1.25,fl.H*s);ctx.globalCompositeOperation='source-over';ctx.globalAlpha=window.exhaustAlpha??1;ctx.drawImage(fl.canvas,-fl.OX*s,-fl.OY*s,fl.W*s,fl.H*s);ctx.restore()});
 }
 
 /* Boss engines: four magenta pixelfx flames placed on the carrier's thrusters for the current view. */
@@ -314,7 +314,7 @@ function drawWorldSprites(project){spriteArt.draws=0;const drawables=[];const px
  for(const b of combat.shots){const p=project(b);if(!p||!terrainVisible(t.p,b))continue;const q=project({x:b.x+b.vx*.04,y:b.y+b.vy*.04,z:b.z+b.vz*.04});const angle=q?Math.atan2(q[1]-p[1],q[0]-p[0]):0;drawables.push({depth:p[2],draw(){if(b.art){paintSprite(b.art,p[0],p[1],px(b.artSize||10,p[2],5,140),b.spin?combat.elapsed*3:angle);return}if(b.pfx&&pfxDrawWorld(b.pfx,p,angle))return;const id=b.weapon??(b.rocket?2:0);paintSprite(`weapons/${weaponArt[id]}/powered`,p[0],p[1],px(b.rocket?10:3,p[2],b.rocket?9:4,b.rocket?46:18),angle);if(b.enemy){ctx.fillStyle='#ff7755';ctx.fillRect(p[0]-2,p[1]-2,3,3)}}})}
  for(const fx of combat.fx){const p=project(fx);if(!p||!terrainVisible(t.p,fx))continue;drawables.push({depth:p[2],draw(){const kind=fx.kind||'explosion',key=kind==='debris'?`support/${fx.piece}-debris`:kind==='muzzle'?'support/muzzle-flash':kind==='surface'?'support/surface-impact':kind==='contrail'?'support/contrail':kind==='scorch'?'support/scorch':effectFrame({...fx,kind});const growth=kind==='explosion'?.35+.65*Math.min(1,(1-fx.life/fx.max)*3):kind==='smoke'?.3+.7*(1-fx.life/fx.max):1;if(key)paintSprite(key,p[0],p[1],px((fx.size||60)*growth,p[2],2,kind==='flare'?18:kind==='muzzle'?14:kind==='hit-sparks'?45:kind==='contrail'?40:280),kind==='debris'?(fx.max-fx.life)*fx.spin:0,Math.min(1,fx.life/.25)*(kind==='smoke'?Math.min(.75,(fx.max-fx.life)*2):1))}})}
  // Chase-view sprites follow bank and barrel roll; the existing mesh handles overhead geometry.
- if(m.mode===1&&m.s>=.98&&!combat.dying){const p=project(G);if(p)drawables.push({depth:p[2],draw(){const angle=G.bank*.72+G.rollExtra,size=px(7.2,p[2],48,140),anim=Math.floor(combat.elapsed*12)%8,exhaust=G.ab>.4?'afterburner':'idle-exhaust';const tailX=p[0]-Math.sin(angle)*size*.48,tailY=p[1]+Math.cos(angle)*size*.48;const pview=aircraftFrame(G),pkey=`player-jets/${playerArt[profile.jet]}/${pview}`,pfr=spriteArt.frames.get(pkey);paintSprite(pkey,p[0],p[1],size,angle);if(pfr)drawPlayerExhaust(pview,p[0],p[1],size,size*pfr.h/pfr.w,angle,G.ab>.4);if(combat.hp<stats().hull*.3)paintSprite(`effects/smoke/${anim}`,tailX,tailY+size*.2,size*.4,angle,.7)}})}
+ const chaseW=h6()[1];if(chaseW>.02&&!combat.dying){const p=project(G);if(p&&p[2]>4)drawables.push({depth:p[2],draw(){const fadeA=Math.min(1,chaseW*1.6);ctx.save();ctx.globalAlpha=fadeA;const angle=G.bank*.72+G.rollExtra,size=px(7.2,p[2],48,140),anim=Math.floor(combat.elapsed*12)%8,exhaust=G.ab>.4?'afterburner':'idle-exhaust';const tailX=p[0]-Math.sin(angle)*size*.48,tailY=p[1]+Math.cos(angle)*size*.48;const pview=aircraftFrame(G),pkey=`player-jets/${playerArt[profile.jet]}/${pview}`,pfr=spriteArt.frames.get(pkey);paintSprite(pkey,p[0],p[1],size,angle,fadeA);window.exhaustAlpha=fadeA;if(pfr)drawPlayerExhaust(pview,p[0],p[1],size,size*pfr.h/pfr.w,angle,G.ab>.4);if(combat.hp<stats().hull*.3)paintSprite(`effects/smoke/${anim}`,tailX,tailY+size*.2,size*.4,angle,.7*fadeA);ctx.restore()}})}
  ctx.save();if(m.mode===2&&m.s>=.98){ctx.beginPath();ctx.rect(0,0,innerWidth,innerHeight*Math.max(0,1-140/J));ctx.clip()}drawables.sort((a,b)=>b.depth-a.depth).forEach(x=>x.draw());ctx.restore();pfxDrawOneShots(project);
 }
 
@@ -458,8 +458,8 @@ setTimeout(()=>{hangar();showHome()},0);
 u7=function(){};
 // Match exhaust and contrails to the reduced airframe.
 const originalJetDraw=j7;
-j7=function(camera){if(combat.dying)return;if(m.mode===1&&m.s>=.98&&spriteArt.ready)return;originalJetDraw(camera);m0*=.52};
-const originalExhaust=K7;K7=function(camera){if(combat.dying)return;if(m.mode===1&&m.s>=.98&&spriteArt.ready)return;originalExhaust(camera)};
+j7=function(camera){if(combat.dying)return;if(spriteArt.ready)return;originalJetDraw(camera);m0*=.52};
+const originalExhaust=K7;K7=function(camera){if(combat.dying)return;if(spriteArt.ready)return;originalExhaust(camera)};
 const originalTrails=P7;P7=function(dt,land,ground){if(G.ab>.5)originalTrails(dt,land,ground)};
 addEventListener('keyup',ev=>{if(/^(Key[WASD]|Arrow)/.test(ev.code)){w.mx=0;w.my=0}},true);
 for(const event of ['touchstart','touchmove','touchend','touchcancel'])panel.addEventListener(event,ev=>ev.stopPropagation());
