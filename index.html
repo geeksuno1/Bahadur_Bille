@@ -190,6 +190,7 @@ body.cockpit-view .health{display:none!important}
 .music-vol{display:flex;align-items:center;gap:6px;font-size:8px;color:#bcd0ff}.music-vol input{flex:1;accent-color:#ffd23a}.music-vol b{font-weight:normal;color:#ffd23a;width:34px}
 @media (max-height:500px){body.mobile #home .home-art{width:52vw}body.mobile #home .home-shade{background:linear-gradient(90deg,#202162 0,#202162 46%,rgba(32,33,98,0) 52%)}body.mobile #home .home-menu{width:46vw;min-width:0;left:10px}.music-art{width:44px;height:44px}.music-box{margin-top:8px;padding:5px}}
 @media (orientation:portrait){#home .home-art{width:100vw;height:52vh;top:0;background-position:center top}#home .home-shade{background:linear-gradient(0deg,#202162 0,#202162 50%,rgba(32,33,98,0) 60%)}#home .home-menu{width:auto;left:12px;right:12px;min-width:0;top:auto;bottom:12px;transform:none;max-height:50vh}}
+body.cockpit-view .attack-warning{display:none!important}
 </style><style>:root{--load-art:url("assets/home/loading-screen.jpg")}</style></head><body><canvas id="gl"></canvas><canvas id="ui"></canvas><div id="loading"><div class="load-panel"><div id="bar"><i></i></div><div id="ltxt" class="mono">Waking up the Kats…</div></div></div><div id="title"><h1 class="pix">BAHADUR<br>BILLE</h1><p class="sub mono">ROLL · BOOST · SKIM THE LAKE</p><p class="go pix" id="go">MOVE THE MOUSE TO TAKE THE STICK</p><p class="go2 pix">LEFT THUMB: DRAG TO STEER<br>RIGHT THUMB: BOOST · FIRE · ROLL · VIEW<br>HOLD BOOST + DRAG = STEER TOO</p></div><div id="toast" class="pix"></div><div id="strip" class="mono"><span class="opt"><b>MOUSE</b> steer</span><span class="sep opt">·</span><span class="opt"><b>CLICK</b> roll</span><span class="sep opt">·</span><span class="opt"><b>HOLD</b> boost</span><span class="sep opt">·</span><span class="opt"><b>RIGHT-CLICK / F</b> rocket</span><span class="sep opt">·</span><span class="opt"><b>SPACE</b> view</span><span id="rk"><span style="margin-right:4px">ROCKETS</span><i></i><i></i><i></i><i></i></span></div><button id="snd">SOUND: OFF</button><div id="stk"><i></i></div><div id="tb"><button id="tBoost">BOOST</button><button id="tFire">FIRE</button><button id="tRoll">ROLL</button><button id="tView">VIEW</button></div>
 <script>var BB_MAP=(()=>{try{const m=JSON.parse(localStorage.getItem('barrel-combat-v1')).map;return m==='snow'||m==='volcano'?m:'valley'}catch(e){return 'valley'}})(),BB_HM=BB_MAP==='snow'?720:BB_MAP==='volcano'?600:360,BB_NO_PULLUP=!0;
 var BB_LOAD_LINES=['Waking up the Kats…','Firing up the twin engines…','Sharpening the claws…','Loading Scratcher Missiles…','Scanning MegaKat City…','Trouble brewing downtown…','Clearing the rooftops…','Bandits detected in the skies…','All systems are PURR-fect!','Claws out. Time to fly!'];
@@ -662,7 +663,11 @@ function drawCockpit(){const c=ckCtx;
  const agl=G.y-X0(G.x,G.z);if(agl<90&&Math.floor(t*4)%2){c.textAlign='center';c.font=font(26,'900');c.fillStyle='#ff4040';txt('s','PULL UP',X(836),Y(470));txt('f','PULL UP',X(836),Y(470))}
  if(combat.target){c.textAlign='center';c.font=font(18);c.fillStyle='#2bff7a';const s=(combat.target.label||'BANDIT').toUpperCase()+' '+(dist(G,combat.target)/1000).toFixed(1)+'KM';txt('s',s,X(836),Y(500));txt('f',s,X(836),Y(500))}
  // ---- warning lights (top centre) flash red on an urgent threat
- if(combat.threat&&combat.threat.urgent&&Math.floor(t*6)%2){c.fillStyle='rgba(255,40,30,.55)';c.fillRect(X(700),Y(548),S(275),S(36))}
+ {const L=[[704,551,48,31],[765,551,31,31],[807,551,42,31],[854,551,40,31],[935,551,33,31]];
+  const missile=combat.shots.some(b=>b.enemy&&b.rocket&&b.life>0&&!b.evaded&&dist(b,G)<1800),guns=!missile&&!!combat.threat;
+  const light=(i,col)=>{const [x,y,w,h]=L[i];c.fillStyle=col;c.fillRect(X(x),Y(y),S(w),S(h));c.fillStyle='rgba(255,255,255,.35)';c.fillRect(X(x+3),Y(y+3),S(w*.5),S(3))};
+  if(missile){const ph=Math.floor(t*7)%2;L.forEach((_,i)=>light(i,(i+ph)%2?'#ffd23a':'#ff2020'))}
+  else if(guns&&Math.floor(t*6)%2)light(2,'#ff2020');}
  // ---- radar
  const rcx=718,rcy=708,rr=86;c.fillStyle='#04241a';rr2(c,X(607),Y(623),S(219),S(172),S(10));c.fill();
  c.save();c.beginPath();c.arc(X(rcx),Y(rcy),S(rr),0,Math.PI*2);c.clip();
